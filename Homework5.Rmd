@@ -1,0 +1,81 @@
+---
+title: "Homework5"
+author: "Kapil Taspa"
+date: "2024-10-23"
+output: html_document
+---
+
+## Question 1
+
+***Create a data frame containing: the names of the players, the minutes played, and their three-point shooting percentage. How many players are in the roster for 2024?***
+
+There are 183 players in the 2024 WNBA roster. Data frame displayed below with names of players as names, the minutes played as minutes, and their three-point shooting percetange as three_percentage.
+
+```{r, warning=FALSE}
+#setup necessary libraries
+library(rvest)
+library(ggplot2)
+
+#create the data frame
+wnba_data <- data.frame(
+  'name' = read_html('https://www.basketball-reference.com/wnba/years/2024_totals.html') |>
+  html_elements('th.left') |>
+  html_text(trim = TRUE),
+  
+  'minutes' = read_html('https://www.basketball-reference.com/wnba/years/2024_totals.html') |>
+  html_elements('.right:nth-child(5)') |>
+  html_text(trim = TRUE) |>
+  as.numeric(),
+  
+  'three_percentage' = read_html('https://www.basketball-reference.com/wnba/years/2024_totals.html') |>
+  html_elements('.right:nth-child(14)') |>
+  html_text(trim = TRUE) |>
+  as.numeric()
+  
+)
+wnba_data
+wnba_data |>
+  nrow()
+```
+
+## Question 2
+
+***Create a graph of the distribution of the three-point shooting percentage made by each players. Report and interpret appropriate statistics.***
+
+A histogram of the three-point shooting percentage made by each player in the 2024 WNBA season is displayed below. The mean is \~0.297 and the median is \~0.316 which indicates a slight left or negative skew because the mean is less than the median. Most of the three-point shooting percentages are below 0.5, however, they are more concentrated on the right side of that i.e. less values are closer to 0.
+
+```{r, warning=FALSE}
+#histogram that shows the distribution of the three-point shooting percentage made by each player in the 2024 WNBA
+#added a breaks argument so the graph shows the correct skew
+hist(wnba_data$three_percentage, 
+     main = "Distribution of Three-Point Percentages in the 2024 WNBA",
+     xlab = "Three-Point Shooting Percentage",
+     ylab = "Frequency",
+     col = "red", na.rm = TRUE, breaks = 50)
+
+#calculate the relevant statistics in this case the mean and median to determine the skew
+mean(wnba_data$three_percentage, na.rm = TRUE)
+median(wnba_data$three_percentage, na.rm = TRUE)
+```
+
+## Question 3
+
+***Create a graph that shows the relationship between the minutes played by each player and their three-point shooting percentage. Choose one particular player, highlight her point on the graph and label it with her name.***
+
+A scatter plot is crated below with the player Sabrina Ionescu highlighted in red and text indicating where the point is on the graph.
+
+```{r, warning=FALSE}
+#scatter plot that shows the relationship between the minutes played by each player and their three-point shooting percentage
+ggplot(wnba_data, aes(x = minutes, y = three_percentage)) +
+  geom_point(color = "black") +
+  geom_point(data = subset(wnba_data, name == "Sabrina Ionescu"), 
+             aes(x = minutes, y = three_percentage), 
+             color = "red", size = 3) +  #higlight the point
+  geom_text(data = subset(wnba_data, name == "Sabrina Ionescu"), #add text with her name
+            aes(label = name), vjust = -1 ,color = "red") +  # Label "Player X" with her name
+  labs(title = "Relationship Between Minutes Played & Three-Point Percentage in the 2024 WNBA",
+       x = "Minutes Played",
+       y = "Three-Point Shooting Percentage")
+
+
+```
