@@ -1,1 +1,2 @@
 # Homework-5
+This repository analyzes 2024 WNBA player statistics, exploring the relationship between players' minutes played and their three-point shooting percentage. Data was sourced from Basketball Reference. The first question is a dataframe containing the names of the players, the minutes played, and their three-point shooting percentage. Next is a scatter plot shows the relationship between minutes played and three-point shooting percentage for each player. The highlighted the player that i chose to emphasize. 
